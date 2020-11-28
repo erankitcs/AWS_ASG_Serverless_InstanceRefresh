@@ -90,7 +90,7 @@ def lambda_handler(event, context):
     print(ami_id)
     ## Validate AMI ID
     check_status = check_ami_exists(ami_id, region)
-    if !check_status 
+    if not check_status:
         return("No AMI id found for region {}".format(
                region))
 

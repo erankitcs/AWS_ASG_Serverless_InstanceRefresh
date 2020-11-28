@@ -117,6 +117,31 @@ resource "aws_iam_policy" "lambda_ssm" {
 EOF
 }
 
+resource "aws_iam_policy" "lambda_ec2_access" {
+  name        = "asg_ir_lambda_ec2_access"
+  path        = "/"
+  description = "IAM policy for Ec2 Access from ASG lambda"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+            "Effect": "Allow",
+            "Action": [
+                "autoscaling:StartInstanceRefresh",
+                "autoscaling:Describe*",
+                "ec2:CreateLaunchTemplateVersion",
+                "ec2:DescribeLaunchTemplates",
+                "ec2:Describe*"
+            ],
+            "Resource": "*"
+        }
+  ]
+}
+EOF
+}
+
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = aws_iam_role.asg_ir_lambda_role.name
   policy_arn = aws_iam_policy.lambda_logging.arn
@@ -125,6 +150,11 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 resource "aws_iam_role_policy_attachment" "lambda_ssmps_read" {
   role       = aws_iam_role.asg_ir_lambda_role.name
   policy_arn = aws_iam_policy.lambda_ssm.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_ec2_access" {
+  role       = aws_iam_role.asg_ir_lambda_role.name
+  policy_arn = aws_iam_policy.lambda_ec2_access.arn
 }
 
 ## Attaching lambda with event bridge.
