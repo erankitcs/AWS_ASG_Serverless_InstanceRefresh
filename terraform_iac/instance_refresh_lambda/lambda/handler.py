@@ -43,10 +43,9 @@ def get_launch_template_id(asg_name):
             template_id = asg_details['LaunchTemplate']['LaunchTemplateId']
             return template_id
         elif 'MixedInstancesPolicy' in asg_details.keys():
-            template_id = asg_details['MixedInstancesPolicy']['LaunchTemplate']
-                                     ['LaunchTemplateSpecification']['LaunchTemplateId']
+            template_id = asg_details['MixedInstancesPolicy']['LaunchTemplate']['LaunchTemplateSpecification']['LaunchTemplateId']
             return template_id
-        else
+        else:
             return None
 
     except ClientError as exp:
@@ -55,14 +54,13 @@ def get_launch_template_id(asg_name):
     
 def create_new_launch_template(lt_id, ami_id):
     try:
-         launch_templates = ec2_client.describe_launch_templates(
+        launch_templates = ec2_client.describe_launch_templates(
             LaunchTemplateIds=[lt_id])
-         latest_version = launch_templates['LaunchTemplates'][0]['LatestVersionNumber']
-         response = ec2_client.create_launch_template_version(
+        latest_version = launch_templates['LaunchTemplates'][0]['LatestVersionNumber']
+        response = ec2_client.create_launch_template_version(
              LaunchTemplateId=lt_id,
-             SourceVersion = str(latest_version)
-             LaunchTemplateData={'ImageId': ami_id}
-         )
+             SourceVersion = str(latest_version),
+             LaunchTemplateData={'ImageId': ami_id})
         logging.info("New Version of Launch Template created successfully.")
         print(response)
         return response['LaunchTemplateVersion'][0]['VersionNumber']
