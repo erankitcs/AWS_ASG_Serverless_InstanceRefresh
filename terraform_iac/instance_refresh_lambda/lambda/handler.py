@@ -23,6 +23,7 @@ def check_ami_exists(ami_id, region):
     response = ec2_client.describe_images(ImageIds=[
         ami_id,
     ])
+    print(response)
     for image in response['Images']:
       if ami_id == image['ImageId']:
         return True
@@ -33,6 +34,7 @@ def get_launch_template_id(asg_name):
         asg = asg_client.describe_auto_scaling_groups(
             AutoScalingGroupNames=[asg_name])
         # Make sure the Auto Scaling group exists
+        print(asg)
         if len(asg['AutoScalingGroups']) == 0:
             raise ValueError("Autoscaling group  : {} not found.".format(asg_name))
         asg_details = asg['AutoScalingGroups'][0]
@@ -90,7 +92,8 @@ def lambda_handler(event, context):
     print(ami_id)
     ## Validate AMI ID
     check_status = check_ami_exists(ami_id, region)
-    return("No AMI id found for region {}".format(
+    if !check_status 
+        return("No AMI id found for region {}".format(
                region))
 
     ## Get ASG Name           
