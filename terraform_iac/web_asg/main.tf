@@ -1,6 +1,6 @@
 ## Creating AMI Parameter store with default value.
 resource "aws_ssm_parameter" "webserver_ami_id_ssmps" {
-  name  = "webserver/amiid"
+  name  = "/webserver/amiid"
   type  = "String"
   value = var.ami_id
 }
@@ -16,11 +16,12 @@ resource "aws_launch_template" "webserver_lt" {
 
 
 ## Create ASG
-resource "aws_autoscaling_group" "bar" {
+resource "aws_autoscaling_group" "webserver_asg" {
+  name = "webserver_asg"
   availability_zones = ["us-east-1a"]
-  desired_capacity   = 2
-  max_size           = 4
-  min_size           = 1
+  desired_capacity   = 0
+  max_size           = 0
+  min_size           = 0
 
   launch_template {
     id      = aws_launch_template.webserver_lt.id

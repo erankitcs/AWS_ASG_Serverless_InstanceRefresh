@@ -58,6 +58,11 @@ resource "aws_lambda_function" "asg_ir_lambda" {
   role          = aws_iam_role.asg_ir_lambda_role.arn
   handler       = "handler.lambda_handler"
   runtime = "python3.8"
+  environment {
+    variables = {
+      WebServerASGName = var.webservers_asg_name
+    }
+  }
 }
 
 ## Lambda role
@@ -105,7 +110,7 @@ resource "aws_iam_policy" "lambda_ssm" {
             "Action": [
                 "ssm:GetParameters"
             ],
-            "Resource": "arn:aws:ssm:us-east-1:*:parameter/${var.ami_id_ssmps}"
+            "Resource": "arn:aws:ssm:us-east-1:*:parameter${var.ami_id_ssmps}"
         }
   ]
 }

@@ -1,18 +1,20 @@
-data "aws_ami_ids" "webserver_ami" {
-  filter {
-    name   = "name"
-    values = ["webami_v*"]
-  }
-}
+# data "aws_ami_ids" "webserver_ami" {
+#   owners = ["856960422202"]
+#   filter {
+#     name   = "name"
+#     values = ["webami_v*"]
+#   }
+# }
 
 module "webservers" {
     source = "./web_asg"
-    ami_id = data.aws_ami_ids.webserver_ami[0]
+    ami_id = "ami-04d29b6f966df1537"
     
 }
 
 module "instance_refresh" {
     source = "./instance_refresh_lambda"
     ami_id_ssmps = module.webservers.ami_id_ssmps
+    webservers_asg_name = module.webservers.webserver_asg
 }
 
