@@ -1,0 +1,22 @@
+{
+    "variables": {
+        "aws_region": "us-east-1"
+    },
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "profile": "asginstancerefresh",
+            "region": "{{user `aws_region`}}",
+            "source_ami": "ami-04d29b6f966df1537",
+            "instance_type": "t2.micro",
+            "ssh_username": "ec2-user",
+            "ami_name": "webserver-image {{timestamp}}"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "scripts/web_ami_setup.sh"
+        }
+    ]
+}

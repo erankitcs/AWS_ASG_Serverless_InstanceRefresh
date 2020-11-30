@@ -18,3 +18,8 @@ module "instance_refresh" {
     webservers_asg_name = module.webservers.webserver_asg
 }
 
+module "cicd_pipeline" {
+    source = "./cicd"
+    github_token_ssmps = var.github_token_ssmps
+    repository         = var.repository
+}

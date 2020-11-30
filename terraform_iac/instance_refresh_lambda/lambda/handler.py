@@ -63,14 +63,14 @@ def create_new_launch_template(lt_id, ami_id):
              LaunchTemplateData={'ImageId': ami_id})
         logging.info("New Version of Launch Template created successfully.")
         print(response)
-        return response['LaunchTemplateVersion'][0]['VersionNumber']
+        return response['LaunchTemplateVersion']['VersionNumber']
     except ClientError as exp:
         logging.error("Error occured during new launch template creation.")
         raise exp
 
 def start_asg_instance_refresh(asg_name):
     try:
-        response = client.start_instance_refresh(
+        response = asg_client.start_instance_refresh(
                      AutoScalingGroupName=asg_name,
                      Strategy='Rolling',
                      Preferences={
