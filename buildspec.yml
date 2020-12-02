@@ -8,8 +8,7 @@ phases:
       - echo "installed Packer."
   build:
     commands:
-      - cd ami_build_packer
-      - ./packer build -color=false images/web_ami_image.json | tee build.log
+      - ./packer build -color=false $CODEBUILD_SRC_DIR/ami_build_packer/images/web_ami_image.json | tee build.log
   post_build:
     commands:
       - egrep "${AWS_REGION}\:\sami\-" build.log | cut -d' ' -f2 > ami_id.txt
