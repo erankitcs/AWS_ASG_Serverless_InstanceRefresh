@@ -15,7 +15,7 @@
     "provisioners": [
         {
             "type": "shell",
-            "script": "$CODEBUILD_SRC_DIR/ami_build_packer/scripts/web_ami_setup.sh"
+            "script": "scripts/web_ami_setup.sh"
         }
     ]
 }
