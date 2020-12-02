@@ -3,9 +3,62 @@ resource "aws_s3_bucket" "amibuild_codepipeline_bucket" {
   acl    = "private"
 }
 
+resource "aws_iam_role" "codepipeline_role" {
+  name = "amibuild_codepipeline_role"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "codepipeline.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "codepipeline_policy" {
+  name = "amibuild_codepipeline_policy"
+  role = aws_iam_role.codepipeline_role.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect":"Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:GetObjectVersion",
+        "s3:GetBucketVersioning",
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.amibuild_codepipeline_bucket.arn}",
+        "${aws_s3_bucket.amibuild_codepipeline_bucket.arn}/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "codebuild:BatchGetBuilds",
+        "codebuild:StartBuild"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
 resource "aws_codepipeline" "amibuild_codepipeline" {
   name     = "tf-test-pipeline"
-  role_arn = aws_iam_role.amibuild_codepipeline_role.arn
+  role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
     location = aws_s3_bucket.amibuild_codepipeline_bucket.bucket
@@ -26,7 +79,8 @@ resource "aws_codepipeline" "amibuild_codepipeline" {
       configuration = {
         Owner      = "erankitcs"
         Repo       = "AWS_ASG_Serverless_InstanceRefresh"
-        Branch     = "master"
+        Branch     = "main"
+        OAuthToken = "XXXX"
       }
     }
   }
@@ -44,7 +98,7 @@ resource "aws_codepipeline" "amibuild_codepipeline" {
       version          = "1"
 
       configuration = {
-        ProjectName = "AMIBUILD_WITHPACKER"
+        ProjectName = aws_codebuild_project.amibuid_codebuild.name
       }
     }
   }
@@ -70,15 +124,126 @@ resource "aws_codepipeline_webhook" "amibuild_cp_wh" {
   }
 }
 
+data "github_repository" "myrepo" {
+  full_name = var.repository
+}
 # Wire the CodePipeline webhook into a GitHub repository.
-resource "github_repository_webhook" "bar" {
-  repository = var.repository
-  name = "amibuild_webhook"
+resource "github_repository_webhook" "github_webhook" {
+  repository = data.github_repository.myrepo.name
   configuration {
     url          = aws_codepipeline_webhook.amibuild_cp_wh.url
     content_type = "json"
-    insecure_ssl = true
+    insecure_ssl = false
     secret       = data.aws_ssm_parameter.github_token.value
   }
   events = ["push"]
+}
+
+#### Code Build here
+
+resource "aws_s3_bucket" "codebuild_log" {
+  bucket = "amibuildcodebuildlog"
+  acl    = "private"
+}
+
+resource "aws_iam_role" "codebuild_role" {
+  name = "amibuild_codebuild_log"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "codebuild.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "codebuild_policy" {
+  role = aws_iam_role.codebuild_role.name
+
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Resource": [
+        "*"
+      ],
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:*"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.codebuild_log.arn}",
+        "${aws_s3_bucket.codebuild_log.arn}/*",
+        "${aws_s3_bucket.amibuild_codepipeline_bucket.arn}",
+        "${aws_s3_bucket.amibuild_codepipeline_bucket.arn}/*"
+      ]
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "poweruser_access" {
+  role       = aws_iam_role.codebuild_role.name
+  policy_arn = "arn:aws:iam::aws:policy/PowerUserAccess"
+}
+
+
+resource "aws_codebuild_project" "amibuid_codebuild" {
+  name          = "amibuid_codebuild"
+  description   = "AMI Build Codebuild pipeline"
+  build_timeout = "5"
+  service_role  = aws_iam_role.codebuild_role.arn
+
+  artifacts {
+    type = "CODEPIPELINE"
+  }
+
+  cache {
+    type     = "S3"
+    location = aws_s3_bucket.codebuild_log.bucket
+  }
+
+  environment {
+    compute_type                = "BUILD_GENERAL1_SMALL"
+    image                       = "aws/codebuild/standard:1.0"
+    type                        = "LINUX_CONTAINER"
+    image_pull_credentials_type = "CODEBUILD"
+  }
+
+  logs_config {
+    cloudwatch_logs {
+      group_name  = "amibuild_log-group"
+      stream_name = "amibuild_log-stream"
+    }
+
+    s3_logs {
+      status   = "ENABLED"
+      location = "${aws_s3_bucket.codebuild_log.id}/build-log"
+    }
+  }
+
+  source {
+    type            = "CODEPIPELINE"
+  }
+
+  source_version = "master"
+
 }

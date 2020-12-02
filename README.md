@@ -12,3 +12,4 @@ This project is created to build a serverless CICD pipeline for ASG Instance ref
 
 ## Run Terraform to deploy Web ASG and serverless setup to automation for ASG instance refresh later.
 - 
+"profile": "asginstancerefresh",
