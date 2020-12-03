@@ -3,12 +3,13 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - cd $CODEBUILD_SRC_DIR/ami_build_packer/
       - echo "Installing Packer"
       - curl -o packer.zip https://releases.hashicorp.com/packer/1.6.5/packer_1.6.5_linux_amd64.zip && unzip packer.zip
       - echo "installed Packer."
   build:
     commands:
-      - ./packer build -color=false $CODEBUILD_SRC_DIR/ami_build_packer/images/web_ami_image.json | tee build.log
+      - ./packer build -color=false images/web_ami_image.json | tee build.log
   post_build:
     commands:
       - egrep "${AWS_REGION}\:\sami\-" build.log | cut -d' ' -f2 > ami_id.txt
