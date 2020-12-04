@@ -9,7 +9,7 @@ phases:
       - echo "installed Packer."
   build:
     commands:
-      - ./packer build -color=false -var 'base_ami=$BASE_AMI' images/web_ami_image.json | tee build.log
+      - ./packer build -color=false -var "base_ami=$BASE_AMI" images/web_ami_image.json | tee build.log
   post_build:
     commands:
       - egrep "${AWS_REGION}\:\sami\-" build.log | cut -d' ' -f2 > ami_id.txt
