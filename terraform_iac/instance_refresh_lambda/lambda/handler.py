@@ -70,6 +70,7 @@ def create_new_launch_template(lt_id, ami_id):
 
 def start_asg_instance_refresh(asg_name):
     try:
+        logging.info("Starting Web Server Autoscaling group refresh.")
         response = asg_client.start_instance_refresh(
                      AutoScalingGroupName=asg_name,
                      Strategy='Rolling',
@@ -77,6 +78,7 @@ def start_asg_instance_refresh(asg_name):
                                 'MinHealthyPercentage': 90,
                                 'InstanceWarmup': 60  ##1 min to wait before next replacement.
                      })
+        logging.info("Instance refresh successfully triggered.")
     except ClientError as exp:
         logging.error("Error occured during instance refresh start.")
         raise exp

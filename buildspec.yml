@@ -9,7 +9,7 @@ phases:
       - echo "installed Packer."
   build:
     commands:
-      - ./packer build -color=false images/web_ami_image.json | tee build.log
+      - ./packer build -color=false -var 'base_ami=$BASE_AMI' images/web_ami_image.json | tee build.log
   post_build:
     commands:
       - egrep "${AWS_REGION}\:\sami\-" build.log | cut -d' ' -f2 > ami_id.txt
@@ -17,8 +17,4 @@ phases:
       - test -s ami_id.txt || exit 1
       - cat ami_id.txt
       - aws ssm put-parameter --name $AMIID_SSMPS --type "String" --value $(cat ami_id.txt) --overwrite
-      - aws sns publish --topic-arn $SNS_ARN --message "Hi There... AMI ID- $(cat ami_id.txt)"
-artifacts:
-  files:
-    - build.log
-  discard-paths: yes
+      - aws sns publish --topic-arn $SNS_ARN --message "Hi There... New AMI is available now. AMI ID- $(cat ami_id.txt)"

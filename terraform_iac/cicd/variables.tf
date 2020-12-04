@@ -32,3 +32,8 @@ variable "aws_profile" {
   type = string
   description = "AWS Profile to be used to create resources."
 }
+
+variable "base_ami_id" {
+  type = string
+  description= "Base AMI ID for web server."
+}

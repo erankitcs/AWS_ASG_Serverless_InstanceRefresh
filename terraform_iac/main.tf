@@ -7,8 +7,9 @@
 # }
 
 module "webservers" {
-    source = "./web_asg"
-    ami_id = "ami-04d29b6f966df1537"
+    source = "./webserver"
+    ami_id = var.ami_id
+    vpc_id = var.vpc_id
     
 }
 
@@ -27,4 +28,5 @@ module "cicd_pipeline" {
     emailids_tobe_notified = var.emailids_tobe_notified
     github_Oauthtoken   = var.github_Oauthtoken
     aws_profile         = var.aws_profile
+    base_ami_id         = var.ami_id
 }

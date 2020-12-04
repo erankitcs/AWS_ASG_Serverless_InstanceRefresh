@@ -28,3 +28,12 @@ variable "aws_profile" {
   description = "AWS Profile to be used to create resources."
 }
 
+variable "vpc_id" {
+  type = string
+  description = "VPC Id for Web Servers."
+}
+
+variable "ami_id" {
+  type = string
+  description= "Base AMI ID for web server."
+}

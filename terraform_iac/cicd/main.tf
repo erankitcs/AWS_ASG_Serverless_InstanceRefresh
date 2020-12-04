@@ -234,7 +234,11 @@ resource "aws_codebuild_project" "amibuid_codebuild" {
       name  = "SNS_ARN"
       value = aws_sns_topic.amibuild_notification.arn
     }
-
+    environment_variable {
+      name  = "BASE_AMI"
+      value = var.base_ami_id
+    }
+    
   }
 
   logs_config {

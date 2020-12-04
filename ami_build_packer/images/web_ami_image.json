@@ -1,12 +1,13 @@
 {
     "variables": {
-        "aws_region": "us-east-1"
+        "aws_region": "us-east-1",
+        "base_ami": ""
     },
     "builders": [
         {
             "type": "amazon-ebs",
             "region": "{{user `aws_region`}}",
-            "source_ami": "ami-04d29b6f966df1537",
+            "source_ami": "{{user `base_ami`}}",
             "instance_type": "t2.micro",
             "ssh_username": "ec2-user",
             "ami_name": "webserver-image {{timestamp}}"
