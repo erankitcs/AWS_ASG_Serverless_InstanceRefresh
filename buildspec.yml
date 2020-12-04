@@ -16,6 +16,8 @@ phases:
       # Packer doesn't return non-zero status; we must do that if Packer build failed
       - test -s ami_id.txt || exit 1
       - cat ami_id.txt
+      - aws ssm put-parameter --name $AMIID_SSMPS --type "String" --value $(cat ami_id.txt) --overwrite
+      - aws sns publish --topic-arn $SNS_ARN --message "Hi There... AMI ID- $(cat ami_id.txt)"
 artifacts:
   files:
     - build.log

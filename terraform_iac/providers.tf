@@ -1,10 +1,10 @@
 provider "aws" {
-  region = "us-east-1"
-  profile = "asginstancerefresh"
+  region = var.region
+  profile = var.aws_profile
 }
 
 provider "github" {
   version = "2.4.0"
   organization = "erankitcs"
-  token = "XXXX"
+  token = var.github_Oauthtoken
 }

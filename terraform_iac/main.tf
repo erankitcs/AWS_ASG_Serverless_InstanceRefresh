@@ -22,4 +22,9 @@ module "cicd_pipeline" {
     source = "./cicd"
     github_token_ssmps = var.github_token_ssmps
     repository         = var.repository
+    ami_id_ssmps       = module.webservers.ami_id_ssmps
+    region             = var.region
+    emailids_tobe_notified = var.emailids_tobe_notified
+    github_Oauthtoken   = var.github_Oauthtoken
+    aws_profile         = var.aws_profile
 }
