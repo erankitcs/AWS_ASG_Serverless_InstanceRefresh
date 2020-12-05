@@ -1,6 +1,6 @@
-variable "github_token_ssmps" {
+variable "github_token" {
   type = string
-  description = "SMS PS Name for Token for GIT Hub Pipeline."
+  description = "Token for GIT Hub Pipeline."
 }
 
 variable "repository" {

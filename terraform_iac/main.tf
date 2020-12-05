@@ -10,6 +10,7 @@ module "webservers" {
     source = "./webserver"
     ami_id = var.ami_id
     vpc_id = var.vpc_id
+    keypair_name = var.keypair_name
     
 }
 
@@ -21,7 +22,7 @@ module "instance_refresh" {
 
 module "cicd_pipeline" {
     source = "./cicd"
-    github_token_ssmps = var.github_token_ssmps
+    github_token       = var.github_token
     repository         = var.repository
     ami_id_ssmps       = module.webservers.ami_id_ssmps
     region             = var.region

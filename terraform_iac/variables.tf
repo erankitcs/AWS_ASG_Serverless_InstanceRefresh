@@ -1,6 +1,6 @@
-variable "github_token_ssmps" {
+variable "github_token" {
   type = string
-  description = "Parameter store name for token of GIT Hub Pipeline"
+  description = "Token of GIT Hub Pipeline Webhook"
 }
 
 variable "repository" {
@@ -37,3 +37,9 @@ variable "ami_id" {
   type = string
   description= "Base AMI ID for web server."
 }
+
+variable "keypair_name" {
+  type = string
+  description= "Key Pair Name for Instances."
+}
+

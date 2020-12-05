@@ -5,3 +5,7 @@ output "ami_id_ssmps" {
 output "webserver_asg" {
     value = aws_autoscaling_group.webserver_asg.name
 }
+
+output "webserver_ApplicationLoadBalancer" {
+  value = "http://${aws_lb.webserver_alb.dns_name}/hello.html"
+}

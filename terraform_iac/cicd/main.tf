@@ -104,9 +104,7 @@ resource "aws_codepipeline" "amibuild_codepipeline" {
   }
 }
 
-data "aws_ssm_parameter" "github_token" {
-  name = var.github_token_ssmps
-}
+
 
 resource "aws_codepipeline_webhook" "amibuild_cp_wh" {
   name            = "amibuild_cp_webhook"
@@ -115,7 +113,7 @@ resource "aws_codepipeline_webhook" "amibuild_cp_wh" {
   target_pipeline = aws_codepipeline.amibuild_codepipeline.name
 
   authentication_configuration {
-    secret_token = data.aws_ssm_parameter.github_token.value
+    secret_token = var.github_token
   }
 
   filter {
@@ -134,7 +132,7 @@ resource "github_repository_webhook" "github_webhook" {
     url          = aws_codepipeline_webhook.amibuild_cp_wh.url
     content_type = "json"
     insecure_ssl = false
-    secret       = data.aws_ssm_parameter.github_token.value
+    secret       = var.github_token
   }
   events = ["push"]
 }
