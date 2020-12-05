@@ -24,6 +24,7 @@ module "cicd_pipeline" {
     source = "./cicd"
     github_token       = var.github_token
     repository         = var.repository
+    github_owner       = var.github_owner
     ami_id_ssmps       = module.webservers.ami_id_ssmps
     region             = var.region
     emailids_tobe_notified = var.emailids_tobe_notified

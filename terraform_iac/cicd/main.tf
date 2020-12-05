@@ -1,3 +1,7 @@
+data "github_repository" "myrepo" {
+  full_name = var.repository
+}
+
 resource "aws_s3_bucket" "amibuild_codepipeline_bucket" {
   bucket = "amibuildartifactcodepipeline"
   acl    = "private"
@@ -77,8 +81,8 @@ resource "aws_codepipeline" "amibuild_codepipeline" {
       output_artifacts = ["amibuild_artifacts"]
 
       configuration = {
-        Owner      = "erankitcs"
-        Repo       = "AWS_ASG_Serverless_InstanceRefresh"
+        Owner      = var.github_owner
+        Repo       = data.github_repository.myrepo.name
         Branch     = "main"
         OAuthToken = var.github_Oauthtoken
       }
@@ -122,9 +126,7 @@ resource "aws_codepipeline_webhook" "amibuild_cp_wh" {
   }
 }
 
-data "github_repository" "myrepo" {
-  full_name = var.repository
-}
+
 # Wire the CodePipeline webhook into a GitHub repository.
 resource "github_repository_webhook" "github_webhook" {
   repository = data.github_repository.myrepo.name

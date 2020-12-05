@@ -1,4 +1,5 @@
 repository ="erankitcs/AWS_ASG_Serverless_InstanceRefresh"
+github_owner="erankitcs"
 aws_profile="asginstancerefresh"
 github_token ="mytoken123"
 region = "us-east-1"

@@ -8,6 +8,12 @@ variable "repository" {
   description = "Repository name for GIT Hub Web Hook."
 }
 
+variable "github_owner" {
+  type = string
+  description = "Repository Owner for GIT Hub Web Hook."
+}
+
+
 variable "region" {
   type = string
   description = "Name of the Region to be deployed."

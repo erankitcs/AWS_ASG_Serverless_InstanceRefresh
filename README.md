@@ -4,14 +4,15 @@ This project is created to build a serverless CICD pipeline for ASG Instance ref
 ### Pre Setup
 Update terraform_iac/inputs.tfvars file with below details
 1. Your Repository Name
-2. AWS Profile which has access to deploy resources.
-3. Git Hub token. It can any secret string.
-4. Region
-5. Email Ids for notification (Inform of string seperated by ,)
-6. OauthToken generated from your Github account.
-7. VPC Id
-8. A base AMI for intial deployment of ASG. It will be used in Packer as base ami.
-9. Key Pair for EC2 instances.
+2. Owner of the Repository
+3. AWS Profile which has access to deploy resources.
+4. Git Hub token. It can any secret string.
+5. Region
+6. Email Ids for notification (Inform of string seperated by ,)
+7. OauthToken generated from your Github account.
+8. VPC Id
+9. A base AMI for intial deployment of ASG. It will be used in Packer as base ami.
+10. Key Pair for EC2 instances.
 
 ### Run Terraform to deploy Web ASG and serverless setup to automation for ASG instance refresh.
 - cd terraform_iac
@@ -30,7 +31,7 @@ Update terraform_iac/inputs.tfvars file with below details
 
 ### Architecture Design
 
-![Screenshot](PackerAMIBuild_ASGInstanceRefresh.jpeg)
+![Screenshot](PackerAMIBuild_ASGInstanceRefreshv1.jpeg)
 
 #### Install Packer(Locally for test)
 - Learn more: `https://learn.hashicorp.com/tutorials/packer/getting-started-install`

@@ -1,8 +1,7 @@
 # Removing key files
 *.pub
 *.ppk
-*.tfvars
-
+*.zip
 # Local .terraform directories
 **/.terraform/*
 

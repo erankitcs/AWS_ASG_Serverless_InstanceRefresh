@@ -8,6 +8,12 @@ variable "repository" {
   description = "Repository name for GIT Hub Web Hook."
 }
 
+variable "github_owner" {
+  type = string
+  description = "Repository Owner for GIT Hub Web Hook."
+}
+
+
 variable "ami_id_ssmps" {
   type = string
   description = "Parameter store name for web server AMI ID."
